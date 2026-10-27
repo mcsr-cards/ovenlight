@@ -1,0 +1,16 @@
+[package]
+name = "ovenlight"
+version = "0.1.0"
+readme = "README.md"
+repository = "https://github.com/mcsr-cards/ovenlight"
+license = "AGPL-3.0"
+edition = "2021"
+
+[dependencies]
+axum = "0.8"
+image = { version = "0.25", default-features = false, features = ["webp"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net"] }
+tract-onnx = "0.21"
+
+[profile.release]
+lto = true
