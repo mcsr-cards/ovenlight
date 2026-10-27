@@ -8,6 +8,7 @@ use axum::{
     Json, Router,
 };
 use image::{imageops::FilterType, DynamicImage, Rgba, RgbaImage};
+use tokio::signal::unix::{signal, SignalKind};
 use tract_onnx::prelude::*;
 
 const MODEL: &[u8] = include_bytes!("../model/nsfw.onnx");
@@ -86,7 +87,7 @@ async fn main() {
             .collect(),
     });
     let host = env::var("HOST").unwrap_or_else(|_| "0.0.0.0".into());
-    let port = env::var("PORT").unwrap_or_else(|_| "3002".into());
+    let port = env::var("PORT").unwrap_or_else(|_| "3003".into());
     let router = Router::new()
         .route("/", post(handle))
         .layer(DefaultBodyLimit::max(8 * 1024 * 1024))
@@ -94,5 +95,16 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(format!("{host}:{port}"))
         .await
         .expect("bind failed");
-    axum::serve(listener, router).await.expect("server error");
+    axum::serve(listener, router)
+        .with_graceful_shutdown(shutdown())
+        .await
+        .expect("server error");
+}
+
+async fn shutdown() {
+    let mut term = signal(SignalKind::terminate()).expect("sigterm handler failed");
+    tokio::select! {
+        _ = tokio::signal::ctrl_c() => {}
+        _ = term.recv() => {}
+    }
 }

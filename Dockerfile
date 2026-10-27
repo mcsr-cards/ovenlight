@@ -5,6 +5,6 @@ RUN cargo build --release
 
 FROM debian:stable-slim
 COPY --from=build /app/target/release/ovenlight /usr/local/bin/ovenlight
-ENV PORT=3002
-EXPOSE 3002
+ENV PORT=3003
+EXPOSE 3003
 CMD ["ovenlight"]

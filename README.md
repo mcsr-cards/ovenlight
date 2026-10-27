@@ -32,7 +32,7 @@ Request bodies are capped at 8 MB.
 | --- | --- | --- |
 | `NSFW_TOKEN` | unset | bearer token required on requests; unset means the endpoint is open |
 | `HOST` | `0.0.0.0` | address to bind, use `127.0.0.1` for localhost only |
-| `PORT` | `3002` | port to listen on |
+| `PORT` | `3003` | port to listen on |
 
 ```
 NSFW_TOKEN=secret cargo run --release
@@ -45,7 +45,7 @@ Generate with `openssl rand -hex 32`
 ### Docker
 
 ```
-docker run -p 3002:3002 -e NSFW_TOKEN=secret ghcr.io/mcsr-cards/ovenlight
+docker run -d --name ovenlight --restart unless-stopped -p 127.0.0.1:3003:3003 -e NSFW_TOKEN=secret ghcr.io/mcsr-cards/ovenlight
 ```
 
 Or if you want to build it yourself like a chud loser: `docker build -t ovenlight .`
